@@ -1,92 +1,14 @@
-import axios from 'axios';
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import SignatureForm from './SignatureForm';
 import SignaturePreview from './SignaturePreview';
 import emailjs from 'emailjs-com';
-
-const Container = styled.div`
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Header = styled.h1`
-  font-size: 28px;
-  color: ${({ theme }) => theme.colors.primary};
-  margin-bottom: 40px;
-`;
-
-const FormWrapper = styled.div`
-  width: 100%;
-  margin-bottom: 40px;
-`;
-
-const PreviewWrapper = styled.div`
-  width: 100%;
-  background-color: #f5f5f5;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-`;
-
-const SendButton = styled.button`
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  margin-top: 20px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
-  }
-`;
-
-const EmailInput = styled.input`
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 5px;
-  margin-bottom: 20px;
-`;
+import axios from 'axios';
+import './SignatureGenerator.css'; // Importa el archivo CSS
 
 const SignatureGenerator = () => {
   const [signatureData, setSignatureData] = useState(null);
   const [userEmail, setUserEmail] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const uploadImage = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('api_key', 'your_api_key'); // Reemplaza con tu API key de Cloudinary
-    formData.append('timestamp', (Date.now() / 1000) | 0); // Genera un timestamp
-    formData.append('folder', 'Signatures'); // Especifica la carpeta donde se guardarán las imágenes
-
-    try {
-      const response = await axios.post('https://api.cloudinary.com/v1_1/dm9driroe/image/upload', formData);
-      return response.data.secure_url; // Devuelve la URL pública de la imagen
-    } catch (error) {
-      console.error('Error uploading image:', error.response ? error.response.data : error.message);
-      return null;
-    }
-  };
-
-  const handleImageUpload = async (event) => {
-    setLoading(true);
-    const file = event.target.files[0];
-    const imageUrl = await uploadImage(file);
-    setLoading(false);
-    if (imageUrl) {
-      setSignatureData((prevData) => ({ ...prevData, photoURL: imageUrl }));
-    }
-  };
 
   const handleSubmit = (values) => {
     setSignatureData(values);
@@ -126,28 +48,28 @@ const SignatureGenerator = () => {
   };
 
   return (
-    <Container>
-      <Header>Gmail Signature Generator</Header>
-      <FormWrapper>
+    <div className="container">
+      <h1 className="header">Gmail Signature Generator</h1>
+      <div className="form-wrapper">
         <SignatureForm onSubmit={handleSubmit} />
-        <input type="file" onChange={handleImageUpload} />
-      </FormWrapper>
-      {loading && <p>Uploading image...</p>}
+      </div>
+      {loading && <p>Loading...</p>}
       {signatureData && (
         <>
-          <PreviewWrapper>
+          <div className="preview-wrapper">
             <SignaturePreview values={signatureData} />
-          </PreviewWrapper>
-          <EmailInput
+          </div>
+          <input
             type="email"
+            className="email-input"
             placeholder="Enter your email address"
             value={userEmail}
             onChange={(e) => setUserEmail(e.target.value)}
           />
-          <SendButton onClick={handleSendEmail}>Send Signature via Email</SendButton>
+          <button className="send-button" onClick={handleSendEmail}>Send Signature via Email</button>
         </>
       )}
-    </Container>
+    </div>
   );
 };
 

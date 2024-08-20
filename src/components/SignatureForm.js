@@ -58,7 +58,7 @@ const SignatureForm = ({ onSubmit }) => {
       lastName: '',
       position: '',
       linkedIn: '',
-      photoFile: null,
+      photoURL: '',
       phone: ''
     },
     onSubmit: values => {
@@ -66,16 +66,29 @@ const SignatureForm = ({ onSubmit }) => {
     },
   });
 
-  const handlePhotoUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-      formik.setFieldValue('photoFile', file);
-    }
+  const handleOpenWidget = () => {
+    const widget = window.cloudinary.createUploadWidget(
+      {
+              cloudName: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
+      uploadPreset: process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET,
+        sources: ['local', 'url', 'camera'], // Opciones disponibles en el widget
+        multiple: false, // Selección de una sola imagen
+        folder: 'Signatures', // Carpeta en Cloudinary
+        clientAllowedFormats: ['png', 'jpg', 'jpeg'], // Formatos permitidos
+        maxImageWidth: 500, // Redimensionar imágenes
+        cropping: false, // No permitir recortes
+      },
+      (error, result) => {
+        if (result.event === 'success') {
+          setPhotoPreview(result.info.secure_url);
+          formik.setFieldValue('photoURL', result.info.secure_url);
+        } else if (error) {
+          console.error('Error during upload:', error);
+          alert('Error uploading image: ' + error.message);
+        }
+      }
+    );
+    widget.open(); // Abre el widget
   };
 
   return (
@@ -119,12 +132,8 @@ const SignatureForm = ({ onSubmit }) => {
         </InputGroup>
         <InputGroup>
           <Label>Photo:</Label>
-          <Input
-            type="file"
-            name="photoFile"
-            accept="image/*"
-            onChange={handlePhotoUpload}
-          />
+          <Button type="button" onClick={handleOpenWidget}>Upload Image</Button>
+          {photoPreview && <img src={photoPreview} alt="Profile Preview" style={{ marginTop: '10px', borderRadius: '50%', width: '80px', height: '80px' }} />}
         </InputGroup>
         <InputGroup>
           <Label>Phone:</Label>
