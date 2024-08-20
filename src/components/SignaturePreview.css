@@ -1,11 +1,10 @@
 .signature-wrapper {
   display: flex;
-  max-width: 40%;
   align-items: center;
   font-family: var(--main-font); /* Usando variables CSS para mantener consistencia */
-  color: var(--text-color);
+  color: black;
   padding: 20px;
-  border-radius: 10px;
+
 }
 
 .photo {

@@ -46,7 +46,7 @@ const SignatureForm = ({ onSubmit }) => {
     >
       {({ setFieldValue }) => (
         <Form>
-          <Box color="black" p={8} bg="white"  maxWidth="container.lg" mx="auto">
+          <Box color="black" p={8} >
             <Field name="firstName">
               {({ field, form }) => (
                 <FormControl isInvalid={form.errors.firstName && form.touched.firstName} mb={6}>
@@ -56,6 +56,7 @@ const SignatureForm = ({ onSubmit }) => {
                     placeholder="Enter your first name" 
                     variant="outline" 
                     borderColor="gray.300" 
+                    _hover={{color: 'gray'}}
                     _placeholder={{ color: 'gray.500' }} 
                   />
                   <FormErrorMessage>{form.errors.firstName}</FormErrorMessage>
@@ -71,7 +72,8 @@ const SignatureForm = ({ onSubmit }) => {
                     {...field} 
                     placeholder="Enter your last name" 
                     variant="outline" 
-                    borderColor="gray.300" 
+                    borderColor="gray.300"
+                    _hover={{color: 'gray'}}
                     _placeholder={{ color: 'gray.500' }} 
                   />
                   <FormErrorMessage>{form.errors.lastName}</FormErrorMessage>
@@ -87,7 +89,8 @@ const SignatureForm = ({ onSubmit }) => {
                     {...field} 
                     placeholder="Enter your position" 
                     variant="outline" 
-                    borderColor="gray.300" 
+                    borderColor="gray.300"
+                    _hover={{color: 'gray'}} 
                     _placeholder={{ color: 'gray.500' }} 
                   />
                   <FormErrorMessage>{form.errors.position}</FormErrorMessage>
@@ -103,7 +106,8 @@ const SignatureForm = ({ onSubmit }) => {
                     {...field} 
                     placeholder="Enter your LinkedIn URL" 
                     variant="outline" 
-                    borderColor="gray.300" 
+                    borderColor="gray.300"
+                    _hover={{color: 'gray'}} 
                     _placeholder={{ color: 'gray.500' }} 
                   />
                   <FormErrorMessage>{form.errors.linkedIn}</FormErrorMessage>
@@ -139,7 +143,8 @@ const SignatureForm = ({ onSubmit }) => {
                     {...field} 
                     placeholder="Enter your phone number" 
                     variant="outline" 
-                    borderColor="gray.300" 
+                    borderColor="gray.300"
+                    _hover={{color: 'gray'}} 
                     _placeholder={{ color: 'gray.500' }} 
                   />
                   <FormErrorMessage>{form.errors.phone}</FormErrorMessage>

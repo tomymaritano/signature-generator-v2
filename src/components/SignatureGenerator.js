@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Input, Heading, VStack, Spinner } from '@chakra-ui/react';
+import { Box, Button, Input, Heading, VStack, Spinner, Stack, Divider } from '@chakra-ui/react';
 import SignatureForm from './SignatureForm';
 import SignaturePreview from './SignaturePreview';
 import emailjs from 'emailjs-com';
@@ -57,37 +57,41 @@ const SignatureGenerator = () => {
 
   return (
     <Layout>
-      <Box p={8} borderRadius="xl">
-        <VStack spacing={4} align="stretch">
-          <Box bg="white" p={6}>
+      <Box p={8} borderRadius="md">
+        <Stack spacing={4} align="stretch">
+          <Box bg="white" borderRadius={'md'} p={2}>
             <SignatureForm onSubmit={handleSubmit} />
           </Box>
-          {loading && <Spinner size="xl" color="teal.500" />}
+          <Divider />
+          {loading && <Spinner size="xl" color="yellow.500" />}
           {signatureData && (
             <>
-              <Box p={4} border="1px" borderColor="gray.200" borderRadius="md">
+              <Box p={4} bgColor={'white'}  borderRadius="md">
                 <SignaturePreview values={signatureData} />
               </Box>
               <Input
                 type="email"
                 placeholder="Enter your email address"
+                variant="filled"
+                bg={'white'}
                 value={userEmail}
                 onChange={(e) => setUserEmail(e.target.value)}
-                variant="filled"
+                _placeholder={{ color: 'gray.500' }}
+                _hover={{color: 'gray'}}
                 size="md"
               />
               <Button
                 colorScheme="teal"
                 onClick={handleSendEmail}
                 isFullWidth
-                mt={4}
+                mt={0}
                 isLoading={loading}
               >
                 Send Signature via Email
               </Button>
             </>
           )}
-        </VStack>
+        </Stack>
       </Box>
     </Layout>
   );
