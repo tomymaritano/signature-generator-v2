@@ -1,17 +1,10 @@
 import React from 'react';
 import SignatureGenerator from './components/SignatureGenerator';
-import GlobalStyle from './styles/GlobalStyle';
-import { ThemeProvider } from 'styled-components';
-import theme from './styles/theme';
+import { ChakraProvider, theme } from '@chakra-ui/react';
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <div>
-        <GlobalStyle />
         <SignatureGenerator />
-      </div>
-    </ThemeProvider>
   );
 }
 

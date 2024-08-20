@@ -1,152 +1,159 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import { useFormik } from 'formik';
-
-const FormWrapper = styled.div`
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  width: 100%;
-`;
-
-const InputGroup = styled.div`
-  margin-bottom: 15px;
-`;
-
-const Label = styled.label`
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 5px;
-  transition: border-color 0.3s;
-
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
-    outline: none;
-  }
-`;
-
-const Button = styled.button`
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
-  }
-`;
+import { Formik, Form, Field } from 'formik';
+import { Box, FormControl, FormLabel, Input, Button, FormErrorMessage } from '@chakra-ui/react';
 
 const SignatureForm = ({ onSubmit }) => {
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  const formik = useFormik({
-    initialValues: {
-      firstName: '',
-      lastName: '',
-      position: '',
-      linkedIn: '',
-      photoURL: '',
-      phone: ''
-    },
-    onSubmit: values => {
-      onSubmit({ ...values, photoPreview });
-    },
-  });
-
-  const handleOpenWidget = () => {
+  const handleOpenWidget = (setFieldValue) => {
     const widget = window.cloudinary.createUploadWidget(
       {
-              cloudName: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
-      uploadPreset: process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET,
-        sources: ['local', 'url', 'camera'], // Opciones disponibles en el widget
-        multiple: false, // Selección de una sola imagen
-        folder: 'Signatures', // Carpeta en Cloudinary
-        clientAllowedFormats: ['png', 'jpg', 'jpeg'], // Formatos permitidos
-        maxImageWidth: 500, // Redimensionar imágenes
-        cropping: false, // No permitir recortes
+        cloudName: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
+        uploadPreset: process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET,
+        sources: ['local', 'url', 'camera'],
+        multiple: false,
+        folder: 'Signatures',
+        clientAllowedFormats: ['png', 'jpg', 'jpeg'],
+        maxImageWidth: 500,
+        cropping: false,
       },
       (error, result) => {
         if (result.event === 'success') {
           setPhotoPreview(result.info.secure_url);
-          formik.setFieldValue('photoURL', result.info.secure_url);
+          setFieldValue('photoURL', result.info.secure_url);
         } else if (error) {
           console.error('Error during upload:', error);
           alert('Error uploading image: ' + error.message);
         }
       }
     );
-    widget.open(); // Abre el widget
+    widget.open(); // Abre el widget de Cloudinary
   };
 
   return (
-    <FormWrapper>
-      <form onSubmit={formik.handleSubmit}>
-        <InputGroup>
-          <Label>First Name:</Label>
-          <Input
-            type="text"
-            name="firstName"
-            onChange={formik.handleChange}
-            value={formik.values.firstName}
-          />
-        </InputGroup>
-        <InputGroup>
-          <Label>Last Name:</Label>
-          <Input
-            type="text"
-            name="lastName"
-            onChange={formik.handleChange}
-            value={formik.values.lastName}
-          />
-        </InputGroup>
-        <InputGroup>
-          <Label>Position:</Label>
-          <Input
-            type="text"
-            name="position"
-            onChange={formik.handleChange}
-            value={formik.values.position}
-          />
-        </InputGroup>
-        <InputGroup>
-          <Label>LinkedIn URL:</Label>
-          <Input
-            type="url"
-            name="linkedIn"
-            onChange={formik.handleChange}
-            value={formik.values.linkedIn}
-          />
-        </InputGroup>
-        <InputGroup>
-          <Label>Photo:</Label>
-          <Button type="button" onClick={handleOpenWidget}>Upload Image</Button>
-          {photoPreview && <img src={photoPreview} alt="Profile Preview" style={{ marginTop: '10px', borderRadius: '50%', width: '80px', height: '80px' }} />}
-        </InputGroup>
-        <InputGroup>
-          <Label>Phone:</Label>
-          <Input
-            type="tel"
-            name="phone"
-            onChange={formik.handleChange}
-            value={formik.values.phone}
-          />
-        </InputGroup>
-        <Button type="submit">Generate Signature</Button>
-      </form>
-    </FormWrapper>
+    <Formik
+      initialValues={{
+        firstName: '',
+        lastName: '',
+        position: '',
+        linkedIn: '',
+        photoURL: '',
+        phone: ''
+      }}
+      onSubmit={(values) => {
+        onSubmit({ ...values, photoPreview });
+      }}
+    >
+      {({ setFieldValue }) => (
+        <Form>
+          <Box color="black" p={8} bg="white"  maxWidth="container.lg" mx="auto">
+            <Field name="firstName">
+              {({ field, form }) => (
+                <FormControl isInvalid={form.errors.firstName && form.touched.firstName} mb={6}>
+                  <FormLabel>First Name</FormLabel>
+                  <Input 
+                    {...field} 
+                    placeholder="Enter your first name" 
+                    variant="outline" 
+                    borderColor="gray.300" 
+                    _placeholder={{ color: 'gray.500' }} 
+                  />
+                  <FormErrorMessage>{form.errors.firstName}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
+
+            <Field name="lastName">
+              {({ field, form }) => (
+                <FormControl isInvalid={form.errors.lastName && form.touched.lastName} mb={6}>
+                  <FormLabel>Last Name</FormLabel>
+                  <Input 
+                    {...field} 
+                    placeholder="Enter your last name" 
+                    variant="outline" 
+                    borderColor="gray.300" 
+                    _placeholder={{ color: 'gray.500' }} 
+                  />
+                  <FormErrorMessage>{form.errors.lastName}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
+
+            <Field name="position">
+              {({ field, form }) => (
+                <FormControl isInvalid={form.errors.position && form.touched.position} mb={6}>
+                  <FormLabel>Position</FormLabel>
+                  <Input 
+                    {...field} 
+                    placeholder="Enter your position" 
+                    variant="outline" 
+                    borderColor="gray.300" 
+                    _placeholder={{ color: 'gray.500' }} 
+                  />
+                  <FormErrorMessage>{form.errors.position}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
+
+            <Field name="linkedIn">
+              {({ field, form }) => (
+                <FormControl isInvalid={form.errors.linkedIn && form.touched.linkedIn} mb={6}>
+                  <FormLabel>LinkedIn URL</FormLabel>
+                  <Input 
+                    {...field} 
+                    placeholder="Enter your LinkedIn URL" 
+                    variant="outline" 
+                    borderColor="gray.300" 
+                    _placeholder={{ color: 'gray.500' }} 
+                  />
+                  <FormErrorMessage>{form.errors.linkedIn}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
+
+            <FormControl mb={6}>
+              <FormLabel>Photo</FormLabel>
+              <Button type="button" onClick={() => handleOpenWidget(setFieldValue)} colorScheme="teal">
+                Upload Image
+              </Button>
+              {photoPreview && (
+                <img
+                  src={photoPreview}
+                  alt="Profile Preview"
+                  style={{
+                    marginTop: '15px',
+                    borderRadius: '50%',
+                    width: '100px',
+                    height: '100px',
+                    border: '2px solid teal',
+                  }}
+                />
+              )}
+            </FormControl>
+
+            <Field name="phone">
+              {({ field, form }) => (
+                <FormControl isInvalid={form.errors.phone && form.touched.phone} mb={6}>
+                  <FormLabel>Phone</FormLabel>
+                  <Input 
+                    {...field} 
+                    placeholder="Enter your phone number" 
+                    variant="outline" 
+                    borderColor="gray.300" 
+                    _placeholder={{ color: 'gray.500' }} 
+                  />
+                  <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
+
+            <Button type="submit" colorScheme="teal" width="full" mt={4}>
+              Generate Signature
+            </Button>
+          </Box>
+        </Form>
+      )}
+    </Formik>
   );
 };
 
